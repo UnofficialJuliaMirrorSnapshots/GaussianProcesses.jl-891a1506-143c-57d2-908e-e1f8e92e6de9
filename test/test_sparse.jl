@@ -3,7 +3,6 @@ module TestSparse
     using GaussianProcesses: get_params, set_params!, update_mll!, update_mll_and_dmll!, init_precompute, predictMVN, FullCovariance, SoR, FITC, DTC, FSA, SubsetOfRegsStrategy, DeterminTrainCondStrat, FullyIndepStrat, FullScaleApproxStrat, getQaa, getQab, predictMVN!
     using Test, Random
     using Distributions: Beta, Normal
-    using StatsBase: sample
     import Calculus
     using LinearAlgebra
     using Statistics
@@ -30,7 +29,7 @@ module TestSparse
     update_mll!(gp_full)
 
     Random.seed!(1)
-    Xu    = Matrix(sample(x, 10; replace=false)')
+    Xu    = Matrix(quantile(x, [0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.98])')
     xtest = Matrix(rand(Xdistr, ntest)'.*10)
 
     inearest = [argmin(abs.(xi.-Xu[1,:])) for xi in x]
@@ -148,16 +147,16 @@ module TestSparse
 
     @testset "Sparse Approximations" begin
         @testset "Subset of Regressors" begin
-            test_sparse(SoR(x', Xu, Y, gp_full.mean, gp_full.kernel, gp_full.logNoise), -3700.9442607193782)
+            test_sparse(SoR(x', Xu, Y, gp_full.mean, gp_full.kernel, gp_full.logNoise), -3704.0847727395367)
         end
         @testset "Deterministic Training Conditionals" begin
-            test_sparse(DTC(x', Xu, Y, gp_full.mean, gp_full.kernel, gp_full.logNoise), -3700.9441871196145)
+            test_sparse(DTC(x', Xu, Y, gp_full.mean, gp_full.kernel, gp_full.logNoise), -3704.084703493389)
         end
         @testset "Fully Independent Training Conditionals" begin
-            test_sparse(FITC(x', Xu, Y, gp_full.mean, gp_full.kernel, gp_full.logNoise), -3706.716231927398)
+            test_sparse(FITC(x', Xu, Y, gp_full.mean, gp_full.kernel, gp_full.logNoise), -3709.601737889645)
         end
         @testset "Fully Independent Training Conditionals" begin
-            test_sparse(FSA(x', Xu, blockindices, Y, gp_full.mean, gp_full.kernel, gp_full.logNoise), -3705.8973027102716)
+            test_sparse(FSA(x', Xu, blockindices, Y, gp_full.mean, gp_full.kernel, gp_full.logNoise), -3706.2892293004734)
         end
     end
 end
