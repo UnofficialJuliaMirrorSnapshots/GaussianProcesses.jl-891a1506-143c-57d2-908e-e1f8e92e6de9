@@ -67,9 +67,7 @@ end
 function Base.Matrix(a::BlockDiagPDMat)
     K = zeros(size(a))
     for (pd,ind) in zip(a.blockPD,a.blockindices)
-        b = convert(Array, @view(K[ind, ind]))
-        b = copy(mat(pd)) # TODO: I think the error lies here. Originally it was copy!(@view(K[ind, ind]), mat(pd))
-        K[ind, ind] = b
+        K[ind, ind] = mat(pd)
     end
     return K # + Diagonal(repeat([1e-10], size(K, 1)))
 end
@@ -408,7 +406,7 @@ predictMVN(xpred::AbstractMatrix, xtrain::AbstractMatrix, ytrain::AbstractVector
       = Σxx - Kxu Kuu⁻¹ Kux + Kxu ΣQR⁻¹ Kux         # expanding
       = Σxx - Qxx           + Kxu ΣQR⁻¹ Kux         # definition of Qxx
 """
-function predictMVN(gp::GPE, xpred::AbstractMatrix, blockindpred::BlockIndices, 
+function predictMVN(xpred::AbstractMatrix, blockindpred::BlockIndices,
                     xtrain::AbstractMatrix, ytrain::AbstractVector,
                     kernel::Kernel, meanf::Mean,
                     alpha::AbstractVector,
