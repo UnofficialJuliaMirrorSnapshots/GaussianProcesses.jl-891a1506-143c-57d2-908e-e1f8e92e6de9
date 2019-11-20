@@ -1,19 +1,16 @@
+push!(LOAD_PATH, "../src/")
+
 using Documenter, GaussianProcesses
 
 makedocs(
     modules = [GaussianProcesses],
-    format = :html,
+    format = Documenter.HTML(),
     sitename = "GaussianProcesses.jl",
-    pages = Any["Introduction" => "index.md",
-                "Usage" => "usage.md",
-                "Reference" => ["gp.md", "kernels.md", "mean.md","lik.md","sparse.md","crossvalidation.md"]
+         pages = ["Introduction" => "index.md",
+                     "Basic usage" => ["Regression.md", "plotting_gps.md"],
+                     "Tutorials" => ["classification_example.md", "sparse_example.md", "mauna_loa.md", "poisson_regression.md"],
+                     "Reference" => ["gp.md", "kernels.md", "mean.md","lik.md","optimization.md","sparse.md","crossvalidation.md"]
                ]
 )
 
-deploydocs(
-    repo = "github.com/STOR-i/GaussianProcesses.jl.git",
-    target = "build",
-    julia = "1.0",
-    deps = nothing,
-    make = nothing,
-)
+deploydocs(repo = "github.com/STOR-i/GaussianProcesses.jl.git")
